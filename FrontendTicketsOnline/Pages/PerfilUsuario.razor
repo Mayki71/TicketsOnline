@@ -1,0 +1,16 @@
+﻿@page "/perfil"
+@using FrontendTicketsOnline.Models
+@using FrontendTicketsOnline.Services
+@inject IUsuarioService UsuarioService
+
+<h3>Mi Perfil</h3>
+
+@code {
+    private UsuarioDTO usuario = new UsuarioDTO();
+    private List<EntradaDTO> entradas = new List<EntradaDTO>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        usuario = await UsuarioService.GetUsuarioActual();
+    }
+}

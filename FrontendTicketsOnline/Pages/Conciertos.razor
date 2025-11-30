@@ -1,0 +1,134 @@
+﻿@page "/conciertos"
+@using FrontendTicketsOnline.Services
+@using FrontendTicketsOnline.Models
+@inject IConciertoService ConciertoService
+
+<div class="conciertos-page">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="mb-4">Todos los Conciertos</h1>
+                
+                <!-- Filtros -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Género Musical</label>
+                                <select class="form-select" @bind="filtroGenero">
+                                    <option value="0">Todos los géneros</option>
+                                    <!-- Aquí cargarías los géneros desde la API -->
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Fecha</label>
+                                <input type="date" class="form-control" @bind="filtroFecha" />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Ciudad</label>
+                                <input type="text" class="form-control" @bind="filtroCiudad" 
+                                       placeholder="Buscar por ciudad..." />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista de Conciertos -->
+                @if (conciertos.Any())
+                {
+                    <div class="row">
+                        @foreach (var concierto in conciertosFiltrados)
+                        {
+                            <div class="col-lg-6 mb-4">
+                                <div class="card concierto-card h-100">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-8">
+                                                <h5 class="card-title">@concierto.Titulo</h5>
+                                                <p class="card-text text-muted small">
+                                                    <i class="fas fa-calendar me-1"></i>
+                                                    @concierto.Fecha.ToString("dd MMM yyyy - hh:mm tt")
+                                                </p>
+                                                <p class="card-text text-muted small">
+                                                    <i class="fas fa-map-marker-alt me-1"></i>
+                                                    @concierto.CiudadNombre
+                                                </p>
+                                                <p class="card-text text-muted small">
+                                                    <i class="fas fa-music me-1"></i>
+                                                    @concierto.GeneroNombre
+                                                </p>
+                                            </div>
+                                            <div class="col-4 text-end">
+                                                <span class="badge bg-primary fs-6">
+                                                    Desde @GetPrecioMinimo(concierto).ToString("C")
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <p class="card-text mt-2">@concierto.Descripcion</p>
+                                        
+                                        @if (concierto.TiposDeEntrada.Any())
+                                        {
+                                            <div class="mt-3">
+                                                <h6>Tipos de Entrada:</h6>
+                                                @foreach (var entrada in concierto.TiposDeEntrada.Take(2))
+                                                {
+                                                    <span class="badge bg-light text-dark me-1">
+                                                        @entrada.Nombre - @entrada.Precio.ToString("C")
+                                                    </span>
+                                                }
+                                                @if (concierto.TiposDeEntrada.Count > 2)
+                                                {
+                                                    <span class="badge bg-secondary">
+                                                        +@(concierto.TiposDeEntrada.Count - 2) más
+                                                    </span>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                    <div class="card-footer bg-transparent">
+                                        <a href="/concierto/@concierto.ConciertoId" 
+                                           class="btn btn-primary w-100">
+                                            Ver Detalles y Comprar
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-5">
+                        <i class="fas fa-music fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted">No hay conciertos disponibles</h4>
+                        <p class="text-muted">Vuelve pronto para descubrir nuevos eventos.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<ConciertoDTO> conciertos = new();
+    private string filtroCiudad = string.Empty;
+    private DateTime? filtroFecha;
+    private int filtroGenero = 0;
+
+    private IEnumerable<ConciertoDTO> conciertosFiltrados => conciertos
+        .Where(c => string.IsNullOrEmpty(filtroCiudad) || 
+                   c.CiudadNombre.Contains(filtroCiudad, StringComparison.OrdinalIgnoreCase))
+        .Where(c => !filtroFecha.HasValue || c.Fecha.Date == filtroFecha.Value.Date)
+        .Where(c => filtroGenero == 0 || true);
+
+    protected override async Task OnInitializedAsync()
+    {
+        conciertos = await ConciertoService.GetConciertos();
+    }
+
+    private decimal GetPrecioMinimo(ConciertoDTO concierto)
+    {
+        return concierto.TiposDeEntrada.Any() ? 
+               concierto.TiposDeEntrada.Min(t => t.Precio) : 0;
+    }
+}

@@ -1,0 +1,23 @@
+﻿@page "/login"
+<div class="max-w-md mx-auto mt-20 p-8 bg-white rounded-xl shadow-lg">
+    <h2 class="text-2xl font-bold mb-6 text-center">Iniciar Sesión</h2>
+    <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+        <InputText class="w-full p-2 mb-4 border rounded" @bind-Value="loginModel.Email" placeholder="Email"/>
+        <InputText class="w-full p-2 mb-4 border rounded" @bind-Value="loginModel.Password" placeholder="Contraseña" type="password"/>
+        <button type="submit" class="w-full bg-indigo-600 text-white p-2 rounded hover:bg-indigo-700">Login</button>
+    </EditForm>
+</div>
+
+@code {
+    private LoginModel loginModel = new();
+    private async Task HandleLogin()
+    {
+        // Llamar AuthService.LoginAsync(loginModel)
+    }
+
+    class LoginModel
+    {
+        public string Email { get; set; }
+        public string Password { get; set; }
+    }
+}

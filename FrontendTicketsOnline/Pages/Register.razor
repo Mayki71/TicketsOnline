@@ -1,0 +1,32 @@
+﻿@page "/register"
+<div class="max-w-md mx-auto mt-20 p-8 bg-white rounded-xl shadow-lg">
+    <h2 class="text-2xl font-bold mb-6 text-center">Registrarse</h2>
+    <EditForm Model="@registerModel" OnValidSubmit="HandleRegister">
+        <InputText class="w-full p-2 mb-4 border rounded" @bind-Value="registerModel.Nombre" placeholder="Nombre"/>
+        <InputText class="w-full p-2 mb-4 border rounded" @bind-Value="registerModel.Apellido" placeholder="Apellido"/>
+        <InputText class="w-full p-2 mb-4 border rounded" @bind-Value="registerModel.Email" placeholder="Email"/>
+        <InputText class="w-full p-2 mb-4 border rounded" @bind-Value="registerModel.Password" placeholder="Contraseña" type="password"/>
+        <select class="w-full p-2 mb-4 border rounded" @bind="registerModel.Rol">
+            <option value="usuario">Usuario</option>
+            <option value="organizador">Organizador</option>
+        </select>
+        <button type="submit" class="w-full bg-indigo-600 text-white p-2 rounded hover:bg-indigo-700">Registrarse</button>
+    </EditForm>
+</div>
+
+@code {
+    private RegisterModel registerModel = new();
+    private async Task HandleRegister()
+    {
+        // Llamar AuthService.RegisterAsync(registerModel)
+    }
+
+    class RegisterModel
+    {
+        public string Nombre { get; set; }
+        public string Apellido { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public string Rol { get; set; } = "usuario";
+    }
+}

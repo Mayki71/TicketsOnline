@@ -1,0 +1,24 @@
+﻿<nav class="bg-indigo-600 text-white p-4 flex justify-between items-center">
+    <div class="font-bold text-xl">TicketsOnline</div>
+    <div class="space-x-4">
+        <a href="/" class="hover:underline">Inicio</a>
+        <a href="/conciertos" class="hover:underline">Conciertos</a>
+        @if(userRole == "usuario")
+        {
+            <a href="/perfilusuario" class="hover:underline">Mi Perfil</a>
+        }
+        @if(userRole == "organizador")
+        {
+            <a href="/panelorganizador" class="hover:underline">Mis Conciertos</a>
+        }
+        @if(userRole == "admin")
+        {
+            <a href="/paneladmin" class="hover:underline">Administración</a>
+        }
+        <a href="/login" class="hover:underline">Login</a>
+    </div>
+</nav>
+
+@code {
+    [Parameter] public string userRole { get; set; } = "guest";
+}

@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="APITicketsOnline/APITicketsOnline.csproj" />
+  <Project Path="FrontendTicketsOnline/FrontendTicketsOnline.csproj" />
+</Solution>

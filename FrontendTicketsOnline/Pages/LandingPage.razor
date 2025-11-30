@@ -1,0 +1,88 @@
+﻿@page "/"
+@using FrontendTicketsOnline.Services
+@using FrontendTicketsOnline.Models
+@inject IConciertoService ConciertoService
+
+<div class="landing-page">
+    <!-- Hero Section -->
+    <section class="hero-section bg-dark text-white py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold mb-4">
+                        Vive la música como nunca antes
+                    </h1>
+                    <p class="lead mb-4">
+                        Descubre los mejores conciertos y eventos en tu ciudad. 
+                        Compra entradas de forma segura y rápida.
+                    </p>
+                    <a href="/conciertos" class="btn btn-primary btn-lg">
+                        Ver Conciertos Disponibles
+                    </a>
+                </div>
+                <div class="col-lg-6">
+                    <img src="/images/concert-hero.jpg" class="img-fluid rounded" alt="Concierto" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Próximos Conciertos -->
+    <section class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Próximos Conciertos</h2>
+            
+            @if (conciertosProximos.Any())
+            {
+                <div class="row">
+                    @foreach (var concierto in conciertosProximos.Take(3))
+                    {
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100 shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">@concierto.Titulo</h5>
+                                    <p class="card-text text-muted">
+                                        <i class="fas fa-calendar me-2"></i>
+                                        @concierto.Fecha.ToString("dd MMM yyyy")
+                                    </p>
+                                    <p class="card-text text-muted">
+                                        <i class="fas fa-map-marker-alt me-2"></i>
+                                        @concierto.CiudadNombre
+                                    </p>
+                                    <p class="card-text">@concierto.Descripcion</p>
+                                </div>
+                                <div class="card-footer bg-transparent">
+                                    <a href="/concierto/@concierto.ConciertoId" 
+                                       class="btn btn-outline-primary w-100">
+                                        Ver Detalles
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                
+                <div class="text-center mt-4">
+                    <a href="/conciertos" class="btn btn-primary">
+                        Ver Todos los Conciertos
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="text-center text-muted">
+                    <p>No hay conciertos próximos en este momento.</p>
+                </div>
+            }
+        </div>
+    </section>
+</div>
+
+@code {
+    private List<ConciertoDTO> conciertosProximos = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        conciertosProximos = await ConciertoService.GetConciertosProximos();
+    }
+}
