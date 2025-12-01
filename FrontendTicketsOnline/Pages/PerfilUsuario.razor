@@ -2,15 +2,74 @@
 @using FrontendTicketsOnline.Models
 @using FrontendTicketsOnline.Services
 @inject IUsuarioService UsuarioService
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@using System.IdentityModel.Tokens.Jwt
+@using System.Security.Claims
+@using System.Linq
 
-<h3>Mi Perfil</h3>
+
+<h3 class="text-2xl font-bold mb-4">Mi Perfil</h3>
+
+@if (usuario != null)
+{
+    <div class="mb-6 p-4 border rounded-lg bg-gray-50">
+        <p><strong>Nombre:</strong> @usuario.Nombre @usuario.Apellido</p>
+        <p><strong>Email:</strong> @usuario.Email</p>
+        <p><strong>Teléfono:</strong> @usuario.Telefono</p>
+    </div>
+
+    <h4 class="text-xl font-semibold mb-3">Mis Entradas</h4>
+
+    @if (entradas.Any())
+    {
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            @foreach (var entrada in entradas)
+            {
+                <div class="p-4 border rounded-lg shadow-sm bg-white">
+                    <p><strong>Entrada ID:</strong> @entrada.EntradaId</p>
+                    <p><strong>Tipo:</strong> @entrada.TipoNombre</p>
+                    <p><strong>Precio:</strong> Bs @entrada.Precio</p>
+                    <p><strong>Código QR:</strong> @entrada.CodigoQr</p>
+                    <p><strong>Estado:</strong> @(entrada.Estado ? "Activa" : "Inactiva")</p>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="text-gray-500">No tienes entradas registradas.</p>
+    }
+}
+else
+{
+    <p>Cargando perfil...</p>
+}
 
 @code {
-    private UsuarioDTO usuario = new UsuarioDTO();
-    private List<EntradaDTO> entradas = new List<EntradaDTO>();
+    private UsuarioDto usuario;
+    private List<EntradaDto> entradas = new();
 
     protected override async Task OnInitializedAsync()
     {
-        usuario = await UsuarioService.GetUsuarioActual();
+        var token = await LocalStorage.GetItemAsync<string>("authToken");
+
+        if (!string.IsNullOrEmpty(token))
+        {
+            int usuarioId = ObtenerUsuarioIdDelToken(token);
+
+            usuario = await UsuarioService.GetUsuarioActual(usuarioId);
+
+            if (usuario != null)
+            {
+                entradas = await UsuarioService.GetEntradasUsuario(usuario.Id);
+            }
+        }
+    }
+    private int ObtenerUsuarioIdDelToken(string token)
+    {
+        var handler = new JwtSecurityTokenHandler();
+        var jwt = handler.ReadJwtToken(token);
+        var idClaim = jwt.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+        return idClaim != null ? int.Parse(idClaim.Value) : 0;
     }
 }

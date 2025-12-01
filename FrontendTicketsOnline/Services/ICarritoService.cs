@@ -6,7 +6,7 @@ namespace FrontendTicketsOnline.Services
 {
     public interface ICarritoService
     {
-        Task AgregarAlCarrito(TipoEntradaDTO entrada, int cantidad);
+        Task AgregarAlCarrito(TipoEntradaDto entrada, int cantidad);
         Task<List<CarritoItem>> GetCarrito();
         Task LimpiarCarrito();
         Task RemoverDelCarrito(int tipoEntradaId);
@@ -14,7 +14,7 @@ namespace FrontendTicketsOnline.Services
 
     public class CarritoItem
     {
-        public TipoEntradaDTO Entrada { get; set; }
+        public TipoEntradaDto Entrada { get; set; }
         public int Cantidad { get; set; }
         public decimal Subtotal => Entrada.Precio * Cantidad;
     }

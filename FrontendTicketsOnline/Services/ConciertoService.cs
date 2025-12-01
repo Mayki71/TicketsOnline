@@ -1,5 +1,4 @@
-﻿using System.Net.Http;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FrontendTicketsOnline.Models;
@@ -10,36 +9,37 @@ namespace FrontendTicketsOnline.Services
     {
         private readonly HttpClient _http;
 
-        public ConciertoService(HttpClient http)
+        public ConciertoService(HttpClient http) => _http = http;
+
+        public async Task<List<ConciertoDto>> GetConciertos() =>
+            await _http.GetFromJsonAsync<List<ConciertoDto>>("api/Concierto") ?? new List<ConciertoDto>();
+
+        public async Task<ConciertoDto?> GetConciertoById(int id) =>
+            await _http.GetFromJsonAsync<ConciertoDto>($"api/Concierto/{id}");
+
+        public async Task<List<ConciertoDto>> GetConciertosProximos() =>
+            await _http.GetFromJsonAsync<List<ConciertoDto>>("api/Concierto") ?? new List<ConciertoDto>();
+
+        public async Task<bool> CreateConcierto(ConciertoCreateDto dto)
         {
-            _http = http;
+            var response = await _http.PostAsJsonAsync("api/Concierto", dto);
+            return response.IsSuccessStatusCode;
         }
 
-        public async Task<List<ConciertoDTO>> GetConciertos()
+        public async Task<bool> UpdateConcierto(int id, ConciertoCreateDto dto)
         {
-            try
-            {
-                return await _http.GetFromJsonAsync<List<ConciertoDTO>>("conciertos") ?? new List<ConciertoDTO>();
-            }
-            catch
-            {
-                return new List<ConciertoDTO>();
-            }
+            var response = await _http.PutAsJsonAsync($"api/Concierto/{id}", dto);
+            return response.IsSuccessStatusCode;
         }
 
-        public async Task<ConciertoDTO> GetConciertoById(int id)
+        public async Task<bool> DeleteConcierto(int id)
         {
-            return await _http.GetFromJsonAsync<ConciertoDTO>($"conciertos/{id}");
+            var response = await _http.DeleteAsync($"api/Concierto/{id}");
+            return response.IsSuccessStatusCode;
         }
-
-        public async Task<List<ConciertoDTO>> GetConciertosPorGenero(int generoId)
+        public async Task<List<GeneroDto>> GetGeneros()
         {
-            return await _http.GetFromJsonAsync<List<ConciertoDTO>>($"conciertos/genero/{generoId}") ?? new List<ConciertoDTO>();
-        }
-
-        public async Task<List<ConciertoDTO>> GetConciertosProximos()
-        {
-            return await _http.GetFromJsonAsync<List<ConciertoDTO>>("conciertos/proximos") ?? new List<ConciertoDTO>();
+            return await _http.GetFromJsonAsync<List<GeneroDto>>("api/genero");
         }
     }
 }

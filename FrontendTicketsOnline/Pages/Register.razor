@@ -1,32 +1,106 @@
 ﻿@page "/register"
-<div class="max-w-md mx-auto mt-20 p-8 bg-white rounded-xl shadow-lg">
-    <h2 class="text-2xl font-bold mb-6 text-center">Registrarse</h2>
+@using System.ComponentModel.DataAnnotations
+@using FrontendTicketsOnline.Models
+@inject IAuthService AuthService
+@inject NavigationManager Nav
+
+<div class="max-w-md mx-auto mt-20 p-8 bg-white rounded-2xl shadow-xl border border-gray-200">
+    <h2 class="text-3xl font-extrabold mb-6 text-center text-indigo-700">Crear Cuenta</h2>
+
+    @if (!string.IsNullOrEmpty(mensaje))
+    {
+        <div class="p-3 mb-4 rounded text-white @(esExito ? "bg-green-600" : "bg-red-600")">
+            @mensaje
+        </div>
+    }
+
     <EditForm Model="@registerModel" OnValidSubmit="HandleRegister">
-        <InputText class="w-full p-2 mb-4 border rounded" @bind-Value="registerModel.Nombre" placeholder="Nombre"/>
-        <InputText class="w-full p-2 mb-4 border rounded" @bind-Value="registerModel.Apellido" placeholder="Apellido"/>
-        <InputText class="w-full p-2 mb-4 border rounded" @bind-Value="registerModel.Email" placeholder="Email"/>
-        <InputText class="w-full p-2 mb-4 border rounded" @bind-Value="registerModel.Password" placeholder="Contraseña" type="password"/>
-        <select class="w-full p-2 mb-4 border rounded" @bind="registerModel.Rol">
-            <option value="usuario">Usuario</option>
-            <option value="organizador">Organizador</option>
-        </select>
-        <button type="submit" class="w-full bg-indigo-600 text-white p-2 rounded hover:bg-indigo-700">Registrarse</button>
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <InputText class="w-full p-3 mb-4 border rounded-lg"
+                   @bind-Value="registerModel.Nombre"
+                   placeholder="Nombre" />
+
+        <InputText class="w-full p-3 mb-4 border rounded-lg"
+                   @bind-Value="registerModel.Apellido"
+                   placeholder="Apellido" />
+
+        <InputText class="w-full p-3 mb-4 border rounded-lg"
+                   @bind-Value="registerModel.Email"
+                   placeholder="Correo electrónico" />
+
+        <InputText class="w-full p-3 mb-4 border rounded-lg"
+                   @bind-Value="registerModel.Password"
+                   placeholder="Contraseña"
+                   type="password" />
+
+        <InputText class="w-full p-3 mb-4 border rounded-lg"
+                   @bind-Value="registerModel.Telefono"
+                   placeholder="Teléfono"
+                   type="tel" />
+
+        <button type="submit"
+                class="w-full bg-indigo-600 text-white p-3 rounded-lg hover:bg-indigo-700 transition">
+            Registrarse
+        </button>
+
+        <p class="mt-4 text-center text-gray-600">
+            ¿Ya tienes una cuenta?
+            <a href="/login" class="text-indigo-600 font-semibold hover:underline">Inicia sesión</a>
+        </p>
     </EditForm>
 </div>
 
 @code {
     private RegisterModel registerModel = new();
+    private string mensaje = "";
+    private bool esExito = false;
+
     private async Task HandleRegister()
     {
-        // Llamar AuthService.RegisterAsync(registerModel)
+        // Mapear RegisterModel -> RegisterDto
+        var registerDto = new RegisterDto
+        {
+            Nombre = registerModel.Nombre,
+            Apellido = registerModel.Apellido,
+            Email = registerModel.Email,
+            Telefono = registerModel.Telefono,
+            Contrasena = registerModel.Password,
+            RolId = 1 // siempre usuario
+        };
+
+        var result = await AuthService.RegisterAsync(registerDto);
+
+        esExito = result.Exito;
+        mensaje = result.Mensaje;
+
+        if (result.Exito)
+        {
+            await Task.Delay(1500);
+            Nav.NavigateTo("/login");
+        }
     }
 
-    class RegisterModel
+    public class RegisterModel
     {
+        [Required(ErrorMessage = "El nombre es obligatorio")]
         public string Nombre { get; set; }
+
+        [Required(ErrorMessage = "El apellido es obligatorio")]
         public string Apellido { get; set; }
+
+        [Required(ErrorMessage = "El email es obligatorio")]
+        [EmailAddress(ErrorMessage = "Formato de email inválido")]
         public string Email { get; set; }
+
+        [Required(ErrorMessage = "La contraseña es obligatoria")]
+        [MinLength(4, ErrorMessage = "Debe tener al menos 4 caracteres")]
         public string Password { get; set; }
-        public string Rol { get; set; } = "usuario";
+
+        [Phone(ErrorMessage = "Formato de teléfono inválido")]
+        [Required(ErrorMessage = "El teléfono es obligatorio")]
+        [MaxLength(8, ErrorMessage = "El teléfono no puede exceder 8 caracteres")]
+        public string Telefono { get; set; }
     }
 }

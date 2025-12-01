@@ -13,7 +13,7 @@ namespace APITicketsOnline.Controllers
     {
         private readonly ConciertosContext _context;
         public GeneroController(ConciertosContext context) => _context = context;
-        [Authorize(Roles = "organizador,admin")]
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<GeneroDto>>> GetAll()
         {

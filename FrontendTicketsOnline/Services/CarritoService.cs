@@ -16,7 +16,7 @@ namespace FrontendTicketsOnline.Services
             _jsRuntime = jsRuntime;
         }
 
-        public async Task AgregarAlCarrito(TipoEntradaDTO entrada, int cantidad)
+        public async Task AgregarAlCarrito(TipoEntradaDto entrada, int cantidad)
         {
             var itemExistente = _carritoItems.FirstOrDefault(x => x.Entrada.TipoId == entrada.TipoId);
 

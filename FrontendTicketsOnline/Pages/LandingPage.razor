@@ -1,88 +1,122 @@
 ﻿@page "/"
-@using FrontendTicketsOnline.Services
-@using FrontendTicketsOnline.Models
 @inject IConciertoService ConciertoService
+@using FrontendTicketsOnline.Models
 
 <div class="landing-page">
-    <!-- Hero Section -->
-    <section class="hero-section bg-dark text-white py-5">
+
+    <!-- HERO -->
+    <section class="hero-section bg-indigo-700 text-white py-5">
         <div class="container">
             <div class="row align-items-center">
+
                 <div class="col-lg-6">
                     <h1 class="display-4 fw-bold mb-4">
-                        Vive la música como nunca antes
+                        Encuentra los mejores conciertos en un solo lugar
                     </h1>
                     <p class="lead mb-4">
-                        Descubre los mejores conciertos y eventos en tu ciudad. 
-                        Compra entradas de forma segura y rápida.
+                        Compra entradas fácilmente, revisa detalles y disfruta de una experiencia moderna y rápida.
                     </p>
-                    <a href="/conciertos" class="btn btn-primary btn-lg">
-                        Ver Conciertos Disponibles
+                    <a class="btn btn-light btn-lg fw-bold" href="/conciertos">
+                        Ver Conciertos
                     </a>
                 </div>
-                <div class="col-lg-6">
-                    <img src="/images/concert-hero.jpg" class="img-fluid rounded" alt="Concierto" />
+
+                <div class="col-lg-6 text-center">
+                    <img src="images/concert-hero.png" class="img-fluid rounded shadow" />
                 </div>
+
             </div>
         </div>
     </section>
 
-    <!-- Próximos Conciertos -->
+    <!-- PRÓXIMOS CONCIERTOS -->
     <section class="py-5">
         <div class="container">
-            <h2 class="text-center mb-5">Próximos Conciertos</h2>
-            
-            @if (conciertosProximos.Any())
+
+            <h2 class="text-center mb-5 text-indigo-700 fw-bold">Próximos Conciertos</h2>
+
+            @if (conciertosProximos is null)
+            {
+                <p class="text-center text-muted">Cargando conciertos...</p>
+            }
+            else if (conciertosProximos.Count == 0)
+            {
+                <p class="text-center text-muted">No hay conciertos disponibles.</p>
+            }
+            else
             {
                 <div class="row">
-                    @foreach (var concierto in conciertosProximos.Take(3))
+                    @foreach (var c in conciertosProximos.Take(3))
                     {
                         <div class="col-md-4 mb-4">
-                            <div class="card h-100 shadow-sm">
+                            <div class="card h-100 shadow-sm border-0">
+
                                 <div class="card-body">
-                                    <h5 class="card-title">@concierto.Titulo</h5>
-                                    <p class="card-text text-muted">
-                                        <i class="fas fa-calendar me-2"></i>
-                                        @concierto.Fecha.ToString("dd MMM yyyy")
+                                    <h5 class="card-title fw-bold">@c.Titulo</h5>
+
+                                    <p class="text-muted mb-2">
+                                        <i class="bi bi-calendar-event me-2"></i>
+                                        @c.Fecha.ToString("dd MMM yyyy")
                                     </p>
-                                    <p class="card-text text-muted">
-                                        <i class="fas fa-map-marker-alt me-2"></i>
-                                        @concierto.CiudadNombre
+
+                                    <p class="text-muted mb-3">
+                                        <i class="bi bi-geo-alt me-2"></i>
+                                        @c.CiudadNombre
                                     </p>
-                                    <p class="card-text">@concierto.Descripcion</p>
+
+                                    <p class="card-text text-secondary">
+                                        @c.Descripcion
+                                    </p>
                                 </div>
+
                                 <div class="card-footer bg-transparent">
-                                    <a href="/concierto/@concierto.ConciertoId" 
-                                       class="btn btn-outline-primary w-100">
+                                    <a class="btn btn-outline-indigo w-100 fw-bold"
+                                       href="/concierto/@c.ConciertoId">
                                         Ver Detalles
                                     </a>
                                 </div>
+
                             </div>
                         </div>
                     }
                 </div>
-                
+
                 <div class="text-center mt-4">
-                    <a href="/conciertos" class="btn btn-primary">
+                    <a class="btn btn-indigo btn-lg fw-bold px-4" href="/conciertos">
                         Ver Todos los Conciertos
                     </a>
                 </div>
             }
-            else
-            {
-                <div class="text-center text-muted">
-                    <p>No hay conciertos próximos en este momento.</p>
-                </div>
-            }
+
         </div>
     </section>
+
 </div>
 
 @code {
-    private List<ConciertoDTO> conciertosProximos = new();
+    private List<ConciertoDto> conciertosProximos = new();
 
     protected override async Task OnInitializedAsync()
     {
         conciertosProximos = await ConciertoService.GetConciertosProximos();
     }
 }
+
+<style>
+    .btn-indigo {
+        background-color: #4f46e5;
+        color: white;
+    }
+    .btn-indigo:hover {
+        background-color: #4338ca;
+        color: white;
+    }
+    .btn-outline-indigo {
+        border: 2px solid #4f46e5;
+        color: #4f46e5;
+    }
+    .btn-outline-indigo:hover {
+        background-color: #4f46e5;
+        color: white;
+    }
+</style>

@@ -1,11 +1,17 @@
 ﻿namespace FrontendTicketsOnline.Models
 {
-    public class EntradaDTO
+    public class EntradaDto
     {
         public int EntradaId { get; set; }
+
         public int OrdenId { get; set; }
+        public int TipoId { get; set; }
+
+        public string TipoNombre { get; set; }
+        public decimal Precio { get; set; }
+
         public string CodigoQr { get; set; }
         public bool Estado { get; set; }
-        public TipoEntradaDTO TipoEntrada { get; set; }
     }
+
 }
