@@ -9,8 +9,8 @@ namespace APITicketsOnline.Models.DTOs
         public int OrdenId { get; set; }
         public decimal Monto { get; set; }
 
-        public string Metodo { get; set; }
-        public string Estado { get; set; }
+        //public string Metodo { get; set; }
+        public bool Estado { get; set; }
         public DateTime FechaPago { get; set; }
     }
 

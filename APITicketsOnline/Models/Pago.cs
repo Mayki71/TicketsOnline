@@ -19,12 +19,12 @@ namespace APITicketsOnline.Models
         [ForeignKey("OrdenId")]
         public Orden? Orden { get; set; }
 
-        [Required(ErrorMessage = "El método de pago es obligatorio")]
+        /*[Required(ErrorMessage = "El método de pago es obligatorio")]
         [StringLength(20, ErrorMessage = "Máximo 20 caracteres")]
         [RegularExpression("^(otro|transferencia|paypal|tarjeta)$",
             ErrorMessage = "Método inválido: debe ser 'otro', 'transferencia', 'paypal' o 'tarjeta'")]
         [Column("metodo")]
-        public string Metodo { get; set; }
+        public string Metodo { get; set; }*/
 
         [RegularExpression(@"^\d{4}$", ErrorMessage = "Debe contener exactamente 4 dígitos")]
         [Column("ultimos_4")]
@@ -47,7 +47,7 @@ namespace APITicketsOnline.Models
         [RegularExpression("^(pendiente|reembolsado|fallido|exitoso)$",
             ErrorMessage = "Estado inválido: debe ser 'pendiente', 'reembolsado', 'fallido' o 'exitoso'")]
         [Column("estado")]
-        public string Estado { get; set; }
+        public bool Estado { get; set; }
 
         [Column("fecha_pago")]
         public DateTime FechaPago { get; set; } = DateTime.Now;

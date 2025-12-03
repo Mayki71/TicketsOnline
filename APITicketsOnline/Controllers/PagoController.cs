@@ -23,7 +23,7 @@ namespace APITicketsOnline.Controllers
                 PagoId = p.PagoId,
                 OrdenId = p.OrdenId,
                 Monto = p.Monto,
-                Metodo = p.Metodo,
+                //Metodo = p.Metodo,
                 Estado = p.Estado,
                 FechaPago = p.FechaPago
             }));
@@ -39,7 +39,7 @@ namespace APITicketsOnline.Controllers
                 PagoId = p.PagoId,
                 OrdenId = p.OrdenId,
                 Monto = p.Monto,
-                Metodo = p.Metodo,
+                //Metodo = p.Metodo,
                 Estado = p.Estado,
                 FechaPago = p.FechaPago
             });
@@ -54,7 +54,7 @@ namespace APITicketsOnline.Controllers
             var p = new Pago
             {
                 OrdenId = dto.OrdenId,
-                Metodo = dto.Metodo,
+                //Metodo = dto.Metodo,
                 Ultimos4 = dto.Ultimos4,
                 MarcaTarjeta = dto.MarcaTarjeta,
                 Token = dto.Token,

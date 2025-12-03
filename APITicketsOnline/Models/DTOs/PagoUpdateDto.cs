@@ -5,7 +5,7 @@ namespace APITicketsOnline.Models.DTOs
     public class PagoUpdateDto
     {
         [Required]
-        public string Estado { get; set; }
+        public bool Estado { get; set; }
     }
 
 }
